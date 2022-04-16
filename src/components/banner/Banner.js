@@ -2,6 +2,7 @@ import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Typography } from "@material-ui/core";
 import Container from "@material-ui/core/Container";
+import Caroussel from "./Caroussel.js";
 
 const useStyles = makeStyles(() => ({
   banner: {
@@ -16,6 +17,13 @@ const useStyles = makeStyles(() => ({
     paddingTop: 25,
     justifyContent: "space-around",
   },
+  tagline: {
+      display: "flex",
+      height: "40%",
+      flexDirection: "column",
+      justifyContent: "center",
+      textAlign: "center"
+  }
 }));
 
 const Banner = () => {
@@ -45,6 +53,7 @@ const Banner = () => {
             Info about your currency
           </Typography>
         </div>
+        <Caroussel />
       </Container>
     </div>
   );
