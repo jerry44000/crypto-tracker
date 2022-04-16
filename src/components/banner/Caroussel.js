@@ -12,7 +12,20 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
   },
+  carousselItem: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    cursor: "pointer",
+    color: "white",
+    transition: "transform 0.15s ease-in-out",
+    "&:hover": { transform: "scale3d(1.05, 1.05, 1)" },
+  },
 }));
+
+export function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
 const Caroussel = () => {
   const classes = useStyles();
@@ -24,7 +37,7 @@ const Caroussel = () => {
     setTrending(data);
   };
 
-  console.log(trending);
+  //   console.log(trending);
 
   useEffect(() => {
     fetchTrendingCoins();
@@ -40,7 +53,7 @@ const Caroussel = () => {
   };
 
   const items = trending.map((coin) => {
-      let profit = coin.price_change_percentage_24h >= 0;
+    let profit = coin.price_change_percentage_24h >= 0;
     return (
       <Link className={classes.carousselItem} to={`/coins/${coin.id}`}>
         <img
@@ -50,11 +63,14 @@ const Caroussel = () => {
           style={{ marginBottom: 10 }}
         />
         <span>
-            {coin?.symbol}
-            &nbsp;
-            <span>
-{profit && '+'} {coin?.price_change_percentage_24h?.toFixed(2)}%
-            </span>
+          {coin?.symbol}
+          &nbsp;
+          <span style={{ color: profit > 0 ? "rgb(9, 217, 26)" : "red" }}>
+            {profit && "+"} {coin?.price_change_percentage_24h?.toFixed(2)}%
+          </span>
+        </span>
+        <span style={{ fontSize: 22, fonWeight: 500 }}>
+          {coin?.symbol} {numberWithCommas(coin?.current_price.toFixed(2))}
         </span>
       </Link>
     );
