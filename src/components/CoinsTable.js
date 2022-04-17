@@ -23,20 +23,23 @@ import {
 } from "@material-ui/core";
 import SearchIcon from "@material-ui/icons/Search";
 import { useNavigate } from "react-router-dom";
+import { numberWithCommas } from "./banner/Caroussel.js";
 
 const CoinsTable = () => {
   let navigate = useNavigate();
   const [coins, setCoins] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState();
+  const [page, setPage] = useState(1);
 
-  const { currency } = CryptoState();
+  const { currency, symbol } = CryptoState();
 
   const fetchCoins = async () => {
     setLoading(true);
     const { data } = await axios.get(CoinList(currency));
     setCoins(data);
     setLoading(false);
+    console.log(data);
   };
 
   useEffect(() => {
@@ -61,12 +64,12 @@ const CoinsTable = () => {
   };
   const useStyles = makeStyles({
     row: {
-      backgroundColor: "#16171a",
+      backgroundColor: "#0a0326",
       cursor: "pointer",
       "&:hover": {
-        backgroundColor: "#131111",
+        backgroundColor: "#06011a",
       },
-      fontFamily: "Montserrat",
+      fontFamily: "Oswald",
     },
     pagination: {
       "& .MuiPaginationItem-root": {
@@ -109,7 +112,7 @@ const CoinsTable = () => {
                         fontFamily: "Oswald",
                       }}
                       key={head}
-                        align={head === "Coin" ? "left" : "right"}
+                      align={head === "Coin" ? "left" : "right"}
                     >
                       {head}
                     </TableCell>
@@ -117,7 +120,7 @@ const CoinsTable = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {handleSearch().map((row) => {
+                {handleSearch().slice((page -1) * 10, (page - 1) * 10 + 10).map((row) => {
                   const profit = row.price_change_percentage_24h > 0;
                   return (
                     <TableRow
@@ -129,7 +132,44 @@ const CoinsTable = () => {
                         component="th"
                         scope="row"
                         style={{ display: "flex", gap: 15 }}
-                      ></TableCell>
+                      >
+                        <img
+                          src={row?.image}
+                          alt={row.name}
+                          height="50"
+                          style={{ marginBottom: 10 }}
+                        />
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <span
+                            style={{ textTransform: "uppercase", fontSize: 22 }}
+                          >
+                            {row.symbol}
+                          </span>
+                          <span style={{ color: "grey" }}>{row.name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell align="right">
+                        {symbol}
+                        {numberWithCommas(row.current_price.toFixed(2))}
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        style={{
+                          color: profit > 0 ? "rgb(9, 217, 26)" : "red",
+                          fontWeight: 500,
+                        }}
+                      >
+                        {profit && "+"}
+                        {row.price_change_percentage_24h.toFixed(2)}%
+                      </TableCell>
+                      <TableCell align="right">
+                        {symbol}{" "}
+                        {numberWithCommas(
+                          row.market_cap.toString().slice(0, -6)
+                        )}
+                      </TableCell>
                     </TableRow>
                   );
                 })}
