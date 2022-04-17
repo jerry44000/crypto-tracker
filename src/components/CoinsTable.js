@@ -27,12 +27,11 @@ import { numberWithCommas } from "./banner/Caroussel.js";
 
 const CoinsTable = () => {
   let navigate = useNavigate();
-  const [coins, setCoins] = useState([]);
-  const [loading, setLoading] = useState(false);
+  
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  const { currency, symbol } = CryptoState();
+  const { currency, symbol, coins, loading, fetchCoins } = CryptoState();
 
   const useStyles = makeStyles({
     row: {
@@ -60,13 +59,7 @@ const CoinsTable = () => {
     },
   });
 
-  const fetchCoins = async () => {
-    setLoading(true);
-    const { data } = await axios.get(CoinList(currency));
-    setCoins(data);
-    setLoading(false);
-    // console.log(data);
-  };
+  
 
   useEffect(() => {
     fetchCoins();

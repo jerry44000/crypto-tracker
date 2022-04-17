@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { HistoricalChart } from "../config/api.js";
 import { CryptoState } from "../context/CryptoContext.js";
+import { chartDays } from "../config/data";
 import {
   makeStyles,
   createTheme,
@@ -8,11 +9,13 @@ import {
 } from "@material-ui/core/styles";
 import axios from "axios";
 import { CircularProgress } from "@material-ui/core";
+import SelectButton from "./SelectButton.js";
 import { Line } from "react-chartjs-2";
 
 const CoinInfo = ({ coin }) => {
   const [historicData, setHistoricData] = useState();
   const [days, setDays] = useState(1);
+  const [flag, setflag] = useState(false);
 
   const { currency } = CryptoState();
 
@@ -48,19 +51,7 @@ const CoinInfo = ({ coin }) => {
   return (
     <ThemeProvider theme={darkTheme}>
       <div className={classes.container}>
-        {/* {!historicData ? (
-          <CircularProgress
-            style={{ color: "green" }}
-            size={250}
-            thickness={1}
-          />
-        ) : (
-          <>
-            <Line
-             
-            />
-          </>
-        )} */}
+       
       </div>
     </ThemeProvider>
   );
