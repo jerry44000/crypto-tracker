@@ -21,6 +21,7 @@ const useStyles = makeStyles(() => ({
     fontFamily: "Oswald",
     fontWeight: "bold",
     cursor: "pointer",
+    color: "green",
   },
 }));
 
