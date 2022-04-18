@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 import { CryptoState } from "../context/CryptoContext.js";
+import AuthModal from "./auth/AuthModal.js";
 
 const useStyles = makeStyles(() => ({
   title: {
@@ -59,6 +60,7 @@ const Header = () => {
               <MenuItem value={"USD"}>USD</MenuItem>
               <MenuItem value={"EUR"}>EUR</MenuItem>
             </Select>
+            <AuthModal />
           </Toolbar>
         </Container>
       </AppBar>
