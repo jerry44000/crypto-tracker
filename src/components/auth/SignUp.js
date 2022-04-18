@@ -9,8 +9,11 @@ import {
 import { CryptoState } from "../../context/CryptoContext.js";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase.js";
 
 const SignUp = ({ handleClose }) => {
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -21,14 +24,42 @@ const SignUp = ({ handleClose }) => {
 
   const { alert, setAlert } = CryptoState();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (password !== repeatPassword) {
       setAlert({
         open: true,
-        message: "Password don't match",
+        message: "Password doesn't match",
         type: "error",
       });
       return;
+    }
+    try {
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      setAlert({
+        open: true,
+        message: `Successfully register. Welcome ${result.user.email}`,
+        type: "success"
+      });
+      handleClose();
+    } catch (error) {
+      if (error.code === "auth/invalid-email") {
+        setAlert({
+          open: true,
+          message: "Email format invalid",
+          type: "error",
+        });
+      }
+      if (error.code === "auth/email-already-in-use") {
+        setAlert({
+          open: true,
+          message: "Email already used",
+          type: "error",
+        });
+      }
     }
   };
 
@@ -37,6 +68,7 @@ const SignUp = ({ handleClose }) => {
       p={3}
       style={{ display: "flex", flexDirection: "column", gap: "20px" }}
     >
+
       <TextField
         variant="outlined"
         type="email"
@@ -53,18 +85,18 @@ const SignUp = ({ handleClose }) => {
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
         InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <TextField
         variant="outlined"
@@ -74,18 +106,18 @@ const SignUp = ({ handleClose }) => {
         onChange={(e) => setRepeatPassword(e.target.value)}
         fullWidth
         InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <Button
         variant="contained"

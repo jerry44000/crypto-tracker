@@ -8,6 +8,9 @@ import {
 } from "@material-ui/core";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
+import { CryptoState } from "../../context/CryptoContext.js";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase";
 
 const Login = ({ handleClose }) => {
   const [email, setEmail] = useState("");
@@ -17,8 +20,42 @@ const Login = ({ handleClose }) => {
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
 
-  const handleSubmit = () => {
-      
+  const { setAlert } = CryptoState();
+
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      setAlert({
+        open: true,
+        message: "Please fill all the fields",
+        type: "error",
+      });
+      return;
+    }
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      setAlert({
+        open: true,
+        message: `Welcome ${result.user.email}`,
+        type: "success",
+      });
+
+      handleClose();
+    } catch (error) {
+      if (error.code === "auth/wrong-password") {
+        setAlert({
+          open: true,
+          message: "Wrong password, try again",
+          type: "error",
+        });
+      }
+      if (error.code === "auth/email-already-exists") {
+        setAlert({
+          open: true,
+          message: "Email already used",
+          type: "error",
+        });
+      }
+    }
   };
 
   return (
@@ -42,19 +79,18 @@ const Login = ({ handleClose }) => {
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
         InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
       />
       <Button
         variant="contained"
@@ -62,7 +98,7 @@ const Login = ({ handleClose }) => {
         style={{ backgroundColor: "green" }}
         onClick={handleSubmit}
       >
-        Sign In
+        Login
       </Button>
     </Box>
   );
