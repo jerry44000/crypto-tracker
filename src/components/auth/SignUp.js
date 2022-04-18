@@ -1,14 +1,36 @@
 import React, { useState } from "react";
-import { Box, Button, TextField } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@material-ui/core";
+import { CryptoState } from "../../context/CryptoContext.js";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import VisibilityOffIcon from "@material-ui/icons/VisibilityOff";
 
 const SignUp = ({ handleClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [reapeatPassword, setRepeatPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+  const handleMouseDownPassword = () => setShowPassword(!showPassword);
+
+  const { alert, setAlert } = CryptoState();
 
   const handleSubmit = () => {
-      
-  }
+    if (password !== repeatPassword) {
+      setAlert({
+        open: true,
+        message: "Password don't match",
+        type: "error",
+      });
+      return;
+    }
+  };
 
   return (
     <Box
@@ -25,19 +47,45 @@ const SignUp = ({ handleClose }) => {
       />
       <TextField
         variant="outlined"
-        type="password"
+        type={showPassword ? "text" : "password"}
         label="Password"
-        value={email}
+        value={password}
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
+        InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
       />
       <TextField
         variant="outlined"
-        type="password"
+        type={showPassword ? "text" : "password"}
         label="Repeat Password"
-        value={email}
+        value={repeatPassword}
         onChange={(e) => setRepeatPassword(e.target.value)}
         fullWidth
+        InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                >
+                  {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
       />
       <Button
         variant="contained"
