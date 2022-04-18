@@ -1,9 +1,10 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import Button from "@material-ui/core/Button";
 import { CryptoState } from "../../context/CryptoContext.js";
-import { Avatar } from "@material-ui/core";
+import { Avatar, Button } from "@material-ui/core";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase.js";
 
 const useStyles = makeStyles({
   container: {
@@ -15,13 +16,39 @@ const useStyles = makeStyles({
     fontFamily: "Oswald",
   },
   profile: {
-      flex: 1,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      gap: "20px",
-      height: "90%"
-  }
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "20px",
+    height: "90%",
+  },
+  picProfile: {
+    width: 200,
+    height: 200,
+    cursor: "pointer",
+    backgroundColor: "green",
+    objectFit: "contain",
+  },
+  logout: {
+    backgroundColor: "green",
+    marginTop: 20,
+    width: "100%",
+    height: "7%",
+  },
+  watchList: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "grey",
+    borderRadius: 10,
+    padding: 15,
+    paddingTop: 10,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 12,
+    overflowY: "scroll",
+  },
 });
 
 export default function UserSideBar() {
@@ -30,7 +57,7 @@ export default function UserSideBar() {
     right: false,
   });
 
-  const { user } = CryptoState();
+  const { user, setAlert } = CryptoState();
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -41,6 +68,16 @@ export default function UserSideBar() {
     }
 
     setState({ ...state, [anchor]: open });
+  };
+
+  const logOut = () => {
+      signOut(auth);
+      setAlert({
+          open: true,
+          message: "Logged out, see you soon.",
+          type: "success"
+      })
+      toggleDrawer();
   };
 
   return (
@@ -82,7 +119,19 @@ export default function UserSideBar() {
                 >
                   {user.displayName || user.email}
                 </span>
+                <div className={classes.watchList}>
+                  <span style={{ fontSize: 15, textShadow: "0 0 px black" }}>
+                    Watchlist
+                  </span>
+                </div>
               </div>
+              <Button
+                variant="contained"
+                className={classes.logout}
+                onClick={logOut}
+              >
+                Log Out
+              </Button>
             </div>
           </Drawer>
         </React.Fragment>
