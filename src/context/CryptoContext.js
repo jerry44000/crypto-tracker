@@ -19,8 +19,8 @@ const CryptoContext = ({ children }) => {
   });
 
   useEffect(() => {
-    onAuthStateChanged(auth, user => {
-      if(user){
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
         setUser(user);
       } else {
         setUser(null);

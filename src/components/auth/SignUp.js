@@ -13,7 +13,6 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase.js";
 
 const SignUp = ({ handleClose }) => {
-  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
@@ -42,7 +41,7 @@ const SignUp = ({ handleClose }) => {
       setAlert({
         open: true,
         message: `Successfully register. Welcome ${result.user.email}`,
-        type: "success"
+        type: "success",
       });
       handleClose();
     } catch (error) {
@@ -68,7 +67,6 @@ const SignUp = ({ handleClose }) => {
       p={3}
       style={{ display: "flex", flexDirection: "column", gap: "20px" }}
     >
-
       <TextField
         variant="outlined"
         type="email"
