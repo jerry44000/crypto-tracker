@@ -5,15 +5,17 @@ import { SingleCoin } from "../config/api.js";
 import { CryptoState } from "../context/CryptoContext.js";
 import CoinInfo from "../components/CoinInfo.js";
 import { makeStyles, createTheme } from "@material-ui/core/styles";
-import { LinearProgress, Typography } from "@material-ui/core";
+import { Button, LinearProgress, Typography } from "@material-ui/core";
 import { numberWithCommas } from "../components/banner/Caroussel.js";
 import DOMPurify from "dompurify";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebase.js";
 
 const CoinPage = () => {
   const { id } = useParams();
   const [coin, setCoin] = useState();
 
-  const { currency, symbol } = CryptoState();
+  const { currency, symbol, user, watchlist, setAlert } = CryptoState();
 
   const useStyles = makeStyles((theme) => ({
     container: {
@@ -57,6 +59,28 @@ const CoinPage = () => {
 
   const classes = useStyles();
 
+  const inWatchlist = watchlist.includes(coin?.id);
+
+  const addToWatchList = async () => {
+    const coinRef = doc(db, "whatchlist", user.uid);
+
+    try {
+      await setDoc(coinRef, {
+        coins: watchlist ? [...watchlist, coin.id] : [coin?.id],
+      });
+      setAlert({
+        open: true,
+        message: `${coin.name} added to your watchlist`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
+  };
   const fetchCoin = async () => {
     const { data } = await axios.get(SingleCoin(id));
     setCoin(data);
@@ -110,6 +134,17 @@ const CoinPage = () => {
               )}
             </Typography>
           </span>
+          {user && (
+            <Button
+              variant="outlined"
+              style={{ width: "100%", height: 40, backgroundColor: "green" }}
+              onClick={addToWatchList}
+            >
+              {inWatchlist
+                ? "Remove from your watchlist"
+                : "Add to your Watchlist"}
+            </Button>
+          )}
         </div>
       </div>
       <CoinInfo coin={coin} />

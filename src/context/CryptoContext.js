@@ -16,8 +16,9 @@ const CryptoContext = ({ children }) => {
     open: false,
     message: "",
     type: "success",
-  });
-
+  });  
+  const [watchlist, setwatchlist] = useState([])
+  
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -25,6 +26,7 @@ const CryptoContext = ({ children }) => {
       } else {
         setUser(null);
       }
+      console.log(user)
     });
   }, []);
 
@@ -52,6 +54,7 @@ const CryptoContext = ({ children }) => {
         user,
         alert,
         setAlert,
+        watchlist
       }}
     >
       {children}
