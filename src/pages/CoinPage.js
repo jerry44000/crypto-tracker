@@ -61,16 +61,40 @@ const CoinPage = () => {
 
   const inWatchlist = watchlist.includes(coin?.id);
 
-  const addToWatchList = async () => {
-    const coinRef = doc(db, "whatchlist", user.uid);
-
+  const addToWatchlist = async () => {
+    const coinRef = doc(db, "watchlist", user.uid);
     try {
-      await setDoc(coinRef, {
-        coins: watchlist ? [...watchlist, coin.id] : [coin?.id],
-      });
+      await setDoc(
+        coinRef,
+        { coins: watchlist ? [...watchlist, coin?.id] : [coin?.id] },
+        { merge: true }
+      );
+
       setAlert({
         open: true,
-        message: `${coin.name} added to your watchlist`,
+        message: `${coin.name} Added to your Watchlist !`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
+  };
+  const removeFromWatchlist = async () => {
+    const coinRef = doc(db, "watchlist", user.uid);
+    try {
+      await setDoc(
+        coinRef,
+        { coins: watchlist.filter((watch) => watch !==coin?.id)},
+        { merge: true }
+      );
+
+      setAlert({
+        open: true,
+        message: `${coin.name} Remove from your Watchlist !`,
         type: "success",
       });
     } catch (error) {
@@ -138,7 +162,7 @@ const CoinPage = () => {
             <Button
               variant="outlined"
               style={{ width: "100%", height: 40, backgroundColor: "green" }}
-              onClick={addToWatchList}
+              onClick={inWatchlist ? removeFromWatchlist : addToWatchlist}
             >
               {inWatchlist
                 ? "Remove from your watchlist"
