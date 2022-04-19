@@ -55,6 +55,7 @@ const CoinPage = () => {
       paddingTop: 10,
       width: "100%",
     },
+   
   }));
 
   const classes = useStyles();

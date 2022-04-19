@@ -2,9 +2,12 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import { CryptoState } from "../../context/CryptoContext.js";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { Avatar, Button } from "@material-ui/core";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase.js";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../../firebase.js";
 
 const useStyles = makeStyles({
   container: {
@@ -49,6 +52,12 @@ const useStyles = makeStyles({
     gap: 12,
     overflowY: "scroll",
   },
+  coin: {
+    padding: 10,
+    borderRadius: 5,
+    display: "flex",
+    backgroundColor: 'green'
+  }
 });
 
 export default function UserSideBar() {
@@ -57,7 +66,7 @@ export default function UserSideBar() {
     right: false,
   });
 
-  const { user, setAlert } = CryptoState();
+  const { user, setAlert, watchlist, coins } = CryptoState();
 
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -71,13 +80,36 @@ export default function UserSideBar() {
   };
 
   const logOut = () => {
-      signOut(auth);
+    signOut(auth);
+    setAlert({
+      open: true,
+      message: "Logged out, see you soon.",
+      type: "success",
+    });
+    toggleDrawer();
+  };
+
+  const removeFromWatchlist = async (coin) => {
+    const coinRef = doc(db, "watchlist", user.uid);
+    try {
+      await setDoc(
+        coinRef,
+        { coins: watchlist.filter((watch) => watch !==coin?.id)},
+        { merge: true }
+      );
+
       setAlert({
-          open: true,
-          message: "Logged out, see you soon.",
-          type: "success"
-      })
-      toggleDrawer();
+        open: true,
+        message: `${coin.name} Remove from your Watchlist !`,
+        type: "success",
+      });
+    } catch (error) {
+      setAlert({
+        open: true,
+        message: error.message,
+        type: "error",
+      });
+    }
   };
 
   return (
@@ -123,6 +155,21 @@ export default function UserSideBar() {
                   <span style={{ fontSize: 15, textShadow: "0 0 px black" }}>
                     Watchlist
                   </span>
+                  {coins.map((coin) => {
+                    if (watchlist.includes(coin.id)) {
+                      return (
+                        <div className={classes.coin}>
+                          <span>
+                            {coin.name}
+                            <DeleteForeverIcon
+                              style={{ cursor: "pointer" }}
+                              onClick={() => removeFromWatchlist(coin)}
+                            />
+                          </span>
+                        </div>
+                      );
+                    }
+                  })}
                 </div>
               </div>
               <Button
