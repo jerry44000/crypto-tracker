@@ -11,6 +11,7 @@ import DOMPurify from "dompurify";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase.js";
 
+
 const CoinPage = () => {
   const { id } = useParams();
   const [coin, setCoin] = useState();
