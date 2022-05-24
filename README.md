@@ -1,4 +1,4 @@
-# Travel App, React, Tailwind, Firebase
+# Crypto App, React, MUI
 
 ## Build with
 
